@@ -47100,6 +47100,59 @@ module.exports = function(module) {
 
 /***/ }),
 
+/***/ "./src/game.js":
+/*!*********************!*\
+  !*** ./src/game.js ***!
+  \*********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+
+var Game = /*#__PURE__*/function () {
+  function Game() {
+    _classCallCheck(this, Game);
+
+    var canvas = document.getElementById('mycanvas');
+    this.app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Application"]({
+      view: canvas,
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+  }
+
+  _createClass(Game, [{
+    key: "start",
+    value: function start() {
+      var texture = pixi_js__WEBPACK_IMPORTED_MODULE_0__["Texture"].from('assets/test.png');
+      var img = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"](texture);
+      img.x = this.app.renderer.width / 2;
+      img.y = this.app.renderer.height / 2;
+      img.anchor.set(0.5);
+      this.app.stage.addChild(img);
+      this.app.ticker.add(function () {
+        img.rotation += 0.1;
+      });
+      this.app.ticker.start();
+    }
+  }]);
+
+  return Game;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (Game);
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -47109,44 +47162,13 @@ module.exports = function(module) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! pixi.js */ "./node_modules/pixi.js/lib/pixi.es.js");
+/* harmony import */ var _game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./game */ "./src/game.js");
 
-var canvas = document.getElementById('mycanvas');
-var app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Application"]({
-  view: canvas,
-  width: window.innerWidth,
-  height: window.innerHeight
-});
-var texture = pixi_js__WEBPACK_IMPORTED_MODULE_0__["Texture"].from('assets/test.png');
-var img = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"].from(texture);
-img.x = app.renderer.width / 2;
-img.y = app.renderer.height / 2;
-img.anchor.set(0.5);
-app.stage.addChild(img);
-app.ticker.add(animate);
-app.ticker.start();
 
-function animate() {
-  img.rotation += 0.1; // app.renderer.render(stage)
-}
-
-app.loader.add('env', 'assets/tiles.png');
-app.loader.load(doneLoading);
-
-function doneLoading(e) {
-  createTextureSheet();
-  app.ticker.add(animate);
-  app.ticker.start();
-}
-
-var textureSheet = {};
-
-function createTextureSheet() {
-  var sheet = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["BaseTexture"].from(app.loader.resources['env'].url);
-  var w = 32;
-  var h = 32;
-  textureSheet['grass'] = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Texture"](sheet, new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Rectangle"](1 * w, 0, w, h));
-}
+window.onload = function () {
+  var game = new _game__WEBPACK_IMPORTED_MODULE_0__["default"]();
+  game.start();
+};
 
 /***/ })
 
