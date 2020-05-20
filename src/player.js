@@ -5,6 +5,7 @@ class Player {
     this.loader = PIXI.Loader.shared;
     this.playerFrames = [];
     this.actions = {};
+    this.facing = 'south';
 
     this.keys = {};
     this.keysDown = this.keysDown.bind(this);
@@ -54,11 +55,11 @@ class Player {
   }
 
   actionPlayer() {
-    this.player = new PIXI.AnimatedSprite(this.actions.walkSouth);
+    this.player = new PIXI.AnimatedSprite(this.actions.standSouth);
     this.player.scale.set(2);
     this.player.anchor.set(0.5);
-    this.player.animationSpeed = 0.2;
-    this.player.play();
+    this.player.animationSpeed = 0.3;
+    this.player.loop = false;
   }
 
   keysDown(e) {
@@ -72,22 +73,65 @@ class Player {
   playerLoop() {
     // W
     if (this.keys['87']) {
+      if (!this.player.playing) {
+        this.player.textures = this.actions.walkNorth;
+        this.facing = 'north';
+        this.player.play();
+      }
       this.player.y -= 5;
-    }
-
-    // A
-    if (this.keys['65']) {
-      this.player.x -= 5;
     }
 
     // S
     if (this.keys['83']) {
+      if (!this.player.playing) {
+        this.player.textures = this.actions.walkSouth;
+        this.facing = 'south';
+        this.player.play();
+      }
       this.player.y += 5;
+    }
+
+    // A
+    if (this.keys['65']) {
+      if (this.player.scale.x > 0) {
+        this.player.scale.x *= -1;
+      }
+      if (!this.player.playing) {
+        this.player.textures = this.actions.walkEast;
+        this.facing = 'side';
+        this.player.play();
+      }
+      this.player.x -= 5;
     }
 
     // D
     if (this.keys['68']) {
+      if (this.player.scale.x < 0) {
+        this.player.scale.x *= -1;
+      }
+      if (!this.player.playing) {
+        this.player.textures = this.actions.walkEast;
+        this.facing = 'side';
+        this.player.play();
+      }
       this.player.x += 5;
+    }
+
+    // IDLE
+    if (!(this.keys['87'] || this.keys['83'] || this.keys['65'] || this.keys['68'])) {
+      switch (this.facing) {
+        case 'south':
+          this.player.textures = this.actions.standSouth;
+          break;
+        case 'north':
+          this.player.textures = this.actions.standNorth;
+          break;
+        case 'side':
+          this.player.textures = this.actions.standEast;
+          break;
+        default:
+          break;
+      }
     }
   }
 }
