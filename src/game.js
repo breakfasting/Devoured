@@ -4,7 +4,7 @@ import * as map from './kitchen.json';
 class Game {
   constructor() {
     const canvas = document.getElementById('mycanvas');
-
+    PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     this.app = new PIXI.Application({
       view: canvas,
       width: window.innerWidth,
@@ -67,9 +67,9 @@ class Game {
     this.img.x = this.app.renderer.width / 2;
     this.img.y = this.app.renderer.height / 2;
     this.img.anchor.set(0.5);
-    for (let layer of this.layers) {
+    this.layers.forEach((layer) => {
       this.app.stage.addChild(layer);
-    }
+    });
 
     this.app.ticker.add(() => {
       this.img.rotation += 0.01;
