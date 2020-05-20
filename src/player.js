@@ -12,6 +12,9 @@ class Player {
     this.keysUp = this.keysUp.bind(this);
     this.playerLoop = this.playerLoop.bind(this);
 
+    this.vx = 0;
+    this.vy = 0;
+
     this.createPlayer();
     this.buildActions();
     this.actionPlayer();
@@ -71,6 +74,8 @@ class Player {
   }
 
   playerLoop() {
+    this.player.y += this.vy;
+    this.player.x += this.vx;
     // W
     if (this.keys['87']) {
       if (!this.player.playing) {
@@ -78,7 +83,7 @@ class Player {
         this.facing = 'north';
         this.player.play();
       }
-      this.player.y -= 5;
+      this.vy = Math.max(-6, this.vy - 2);
     }
 
     // S
@@ -88,7 +93,7 @@ class Player {
         this.facing = 'south';
         this.player.play();
       }
-      this.player.y += 5;
+      this.vy = Math.min(6, this.vy + 2);
     }
 
     // A
@@ -101,7 +106,7 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.player.x -= 5;
+      this.vx = Math.max(-6, this.vx - 2);
     }
 
     // D
@@ -114,7 +119,23 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.player.x += 5;
+      this.vx = Math.min(6, this.vx + 2);
+    }
+
+    if (this.vx > 0) {
+      this.vx -= 0.5;
+    }
+
+    if (this.vx < 0) {
+      this.vx += 0.5;
+    }
+
+    if (this.vy > 0) {
+      this.vy -= 0.5;
+    }
+
+    if (this.vy < 0) {
+      this.vy += 0.5;
     }
 
     // IDLE
