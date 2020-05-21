@@ -1,11 +1,14 @@
 import * as PIXI from 'pixi.js';
+import rectsIntersect from './util';
 
 class Player {
-  constructor() {
+  constructor(layers) {
     this.loader = PIXI.Loader.shared;
     this.playerFrames = [];
     this.actions = {};
     this.facing = 'south';
+    this.layers = layers;
+    this.boxes = [layers.appleBox, layers.vegBox, layers.potatoBox, layers.fishBox];
 
     this.keys = {};
     this.keysDown = this.keysDown.bind(this);
@@ -76,6 +79,14 @@ class Player {
   playerLoop() {
     this.player.y += this.vy;
     this.player.x += this.vx;
+    if (this.boxes.some((box) => rectsIntersect(this.player, box))) {
+      this.player.y -= this.vy;
+      this.player.x -= this.vx;
+      this.vy = 0;
+      this.vx = 0;
+    }
+
+
     // W
     if (this.keys['87']) {
       if (!this.player.playing) {
@@ -154,6 +165,8 @@ class Player {
           break;
       }
     }
+
+    // COLLISION
   }
 }
 

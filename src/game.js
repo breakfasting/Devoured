@@ -28,7 +28,7 @@ class Game {
       })
       .load(() => {
         this.map = new Map(map.default);
-        this.player = new Player();
+        this.player = new Player(this.map.layers);
         this.start();
       });
   }
@@ -40,10 +40,12 @@ class Game {
   start() {
     // const player = new PIXI.Sprite(this.player.playerFrames[4]);
     // player.scale.set(2);
-    this.player.player.x = this.app.renderer.width / 2;
+    // this.player.player.x = this.app.renderer.width / 2;
+    this.player.player.x = 300;
     this.player.player.y = this.app.renderer.height / 2;
 
-    this.map.layers.forEach((layer) => {
+    console.log(this.map.layers);
+    Object.values(this.map.layers).forEach((layer) => {
       this.app.stage.addChild(layer);
     });
     this.app.stage.addChild(this.player.player);

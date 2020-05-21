@@ -5,7 +5,7 @@ class Map {
     this.map = mapFile;
     this.tileSize = 16;
     this.tileTextures = [];
-    this.layers = [];
+    this.layers = {};
 
     this.loader = PIXI.Loader.shared;
     this.buildTile();
@@ -39,7 +39,7 @@ class Map {
         }
       }
       oneLayer.scale.set(1.5);
-      this.layers.push(oneLayer);
+      this.layers[this.map.layers[layer].name] = oneLayer;
     }
   }
 }
