@@ -2,13 +2,15 @@ import * as PIXI from 'pixi.js';
 import rectsIntersect from './util';
 
 class Player {
-  constructor(layers) {
+  constructor(layers, group) {
     this.loader = PIXI.Loader.shared;
     this.playerFrames = [];
     this.actions = {};
     this.facing = 'south';
     this.layers = layers;
-    this.boxes = [layers.appleBox, layers.vegBox, layers.potatoBox, layers.fishBox];
+    this.group = group;
+    this.boxes = [...layers];
+    this.active = null;
 
     this.keys = {};
     this.keysDown = this.keysDown.bind(this);
@@ -62,8 +64,11 @@ class Player {
 
   actionPlayer() {
     this.player = new PIXI.AnimatedSprite(this.actions.standSouth);
+    this.player.parentGroup = this.group;
     this.player.scale.set(2);
-    this.player.anchor.set(0.5);
+    // this.player.anchor.set(0.5);
+    this.player.anchor.x = 0.5;
+    this.player.anchor.y = 0.5;
     this.player.animationSpeed = 0.3;
     this.player.loop = false;
   }
@@ -79,12 +84,29 @@ class Player {
   playerLoop() {
     this.player.y += this.vy;
     this.player.x += this.vx;
-    if (this.boxes.some((box) => rectsIntersect(this.player, box))) {
-      this.player.y -= this.vy;
-      this.player.x -= this.vx;
-      this.vy = 0;
-      this.vx = 0;
+    // this.player.zOrder -= 10;
+    this.boxes.forEach((box) => {
+      if (box.collision(this.player)) {
+        // console.log(box)
+        this.player.y -= this.vy;
+        this.player.x -= this.vx;
+        this.vy = 0;
+        this.vx = 0;
+        this.active = this.active ? this.active : box.activate();
+      }
+    });
+    // console.log(this.active)
+    // if (this.boxes.some((box) => box.collision(this.player))) {
+    //   this.player.y -= this.vy;
+    //   this.player.x -= this.vx;
+    //   this.vy = 0;
+    //   this.vx = 0;
+    // }
+
+    if (this.active && !this.active.inRange(this.player)) {
+      this.active = this.active.deactivate();
     }
+    // console.log(this.player.y);
 
 
     // W
@@ -94,7 +116,7 @@ class Player {
         this.facing = 'north';
         this.player.play();
       }
-      this.vy = Math.max(-6, this.vy - 2);
+      this.vy = Math.max(-6, this.vy - 1);
     }
 
     // S
@@ -104,7 +126,7 @@ class Player {
         this.facing = 'south';
         this.player.play();
       }
-      this.vy = Math.min(6, this.vy + 2);
+      this.vy = Math.min(6, this.vy + 1);
     }
 
     // A
@@ -117,7 +139,7 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.vx = Math.max(-6, this.vx - 2);
+      this.vx = Math.max(-6, this.vx - 1);
     }
 
     // D
@@ -130,7 +152,7 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.vx = Math.min(6, this.vx + 2);
+      this.vx = Math.min(6, this.vx + 1);
     }
 
     if (this.vx > 0) {

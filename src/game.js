@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js';
+import 'pixi-layers';
 import Map from './map';
 import Player from './player';
-import * as map from './kitchen.json';
+import * as map from './simple.json';
 
 class Game {
   constructor() {
@@ -27,28 +28,33 @@ class Game {
         console.log(`${loader.progress}% loaded`);
       })
       .load(() => {
-        this.map = new Map(map.default);
-        this.player = new Player(this.map.layers);
+        this.greenGroup = new PIXI.display.Group(1, ((sprite) => {
+          sprite.zOrder = sprite.y;
+        }));
+        this.map = new Map(map.default, this.greenGroup);
+        this.player = new Player(this.map.layers, this.greenGroup);
         this.start();
       });
   }
 
   gameLoop() {
     this.keysHUD.innerHTML = JSON.stringify(this.player.keys);
+    document.getElementById('activeHUD').innerHTML = this.player.active ? this.player.active.name : 'no' ;
   }
 
   start() {
-    // const player = new PIXI.Sprite(this.player.playerFrames[4]);
-    // player.scale.set(2);
-    // this.player.player.x = this.app.renderer.width / 2;
-    this.player.player.x = 300;
-    this.player.player.y = this.app.renderer.height / 2;
+    this.app.stage = new PIXI.display.Stage();
+    this.app.stage.sortableChildren = true;
+    this.app.stage.addChild(new PIXI.display.Layer(this.greenGroup));
 
-    console.log(this.map.layers);
-    Object.values(this.map.layers).forEach((layer) => {
+    this.player.player.x = this.app.renderer.width / 2;
+    this.player.player.y = this.app.renderer.height / 2;
+    this.app.stage.addChild(this.player.player);
+    // console.log(this.map.layers);
+    this.map.layers.forEach((layer) => {
       this.app.stage.addChild(layer);
     });
-    this.app.stage.addChild(this.player.player);
+
     // this.app.ticker.add(() => {
     //   layer.rotation += 0.01;
     // });

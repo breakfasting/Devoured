@@ -9,3 +9,8 @@ body, html {
   position: absolute;
   color: white;
 }
+#activeHUD {
+  position: absolute;
+  bottom: 0;
+  color: white;
+}

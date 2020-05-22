@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "pixi-layers": "^0.2.3",
     "pixi.js": "^5.2.4"
   },
   "devDependencies": {
