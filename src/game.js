@@ -64,9 +64,9 @@ class Game {
     // console.log(this.mapItems)
     this.app.stage.addChild(this.mapItems);
 
-    // this.app.ticker.add(() => {
-    //   layer.rotation += 0.01;
-    // });
+    this.app.ticker.add(() => {
+      this.mapItems.children.forEach(item => item.fly());
+    });
     this.app.ticker.add(this.gameLoop);
     this.app.ticker.add(this.player.playerLoop);
     this.app.ticker.start();

@@ -4,6 +4,11 @@ class Item extends PIXI.Sprite {
   constructor(texture, type) {
     super(texture);
     this.type = type;
+    this.fly = this.fly.bind(this);
+    this.vx = 0;
+    this.vy = 0;
+    this.flying = false;
+    this.value = 0;
   }
 
   static createItem(itemName, x, y, group) {
@@ -17,9 +22,40 @@ class Item extends PIXI.Sprite {
     return item;
   }
 
+  fly() {
+    if (this.flying) {
+      this.x += this.vx;
+      this.y += this.vy;
+      if (this.vx > 0) {
+        this.vx = this.vx - 0.2 < 0 ? 0 : this.vx - 0.2;
+      }
+
+      if (this.vx < 0) {
+        this.vx = this.vx + 0.2 > 0 ? 0 : this.vx + 0.2;
+      }
+
+      if (this.vy > 0) {
+        this.vy = this.vy - 0.2 < 0 ? 0 : this.vy - 0.2;
+      }
+
+      if (this.vy < 0) {
+        this.vy = this.vy + 0.2 > 0 ? 0 : this.vy + 0.2;
+      }
+
+      if (this.vx !== 0 || this.vy !== 0) {
+        this.rotation += 0.1;
+      }
+    }
+  }
+
+  float() {
+    this.value += 0.1;
+    this.y += Math.sin(this.value) / 4;
+  }
+
   activate() {
     this.tint = 0xFF0000;
-    return this
+    return this;
   }
 
   deactivate() {

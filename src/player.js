@@ -90,7 +90,9 @@ class Player {
 
   mouseDown(e) {
     if (!this.heldItem.type && e.button === 0) {
-      if (this.active) {
+      if (this.hoverItem) {
+        this.heldItem = this.hoverItem;
+      } else if (this.active) {
         this.heldItem = this.active.createItem(this.player.x, this.player.y + 10, this.group);
         this.mapItems.addChild(this.heldItem);
       }
@@ -99,6 +101,14 @@ class Player {
 
   contextMenu(e) {
     e.preventDefault();
+    this.heldItem.flying = true;
+    this.heldItem.vy = Math.sin(Math.atan((e.clientY - this.player.y) / (e.clientX - this.player.x))) * 10;
+    // this.heldItem.vy = ()) * 10;
+    this.heldItem.vx = Math.cos(Math.atan((e.clientY - this.player.y) / (e.clientX - this.player.x))) * 10;
+    if (e.clientX - this.player.x < 0) {
+      this.heldItem.vx = -this.heldItem.vx;
+      this.heldItem.vy = -this.heldItem.vy;
+    }
     this.heldItem = { type: null, parent: {} };
   }
 
