@@ -1,10 +1,15 @@
 import * as PIXI from 'pixi.js';
+import Item from './item';
 
 class Station extends PIXI.Container {
   constructor(name) {
     super();
     this.name = name;
     this.active = false;
+  }
+
+  createItem() {
+    return Item.createItem('lettuce', 100, 100);
   }
 
   activate() {
@@ -42,11 +47,6 @@ class Station extends PIXI.Container {
       && aBox.x < bBox.x + bBox.width - 16
       && aBox.y + aBox.height - 16 > bBox.y
       && aBox.y < bBox.y + bBox.height - 44;
-
-    if (collide) {
-      // console.log('you hit ', this);
-      // this.activate();
-    }
 
     return collide;
   }

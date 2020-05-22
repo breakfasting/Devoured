@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import 'pixi-layers';
 import Map from './map';
 import Player from './player';
+import Item from './item';
 import * as map from './simple.json';
 
 class Game {
@@ -18,11 +19,15 @@ class Game {
     this.keysHUD = document.getElementById('keysHUD');
     this.tileSize = 16;
 
+    this.mapItems = new PIXI.Container();
+    this.mapItems.zIndex = 4;
+
     this.gameLoop = this.gameLoop.bind(this);
   }
 
   load() {
     this.loader.add('player', 'assets/player.png');
+    this.loader.add('lettuce', 'assets/food/Lettuce.png');
     this.loader.add('tileset', 'assets/tiles.png')
       .on('progress', (loader) => {
         console.log(`${loader.progress}% loaded`);
@@ -32,7 +37,7 @@ class Game {
           sprite.zOrder = sprite.y;
         }));
         this.map = new Map(map.default, this.greenGroup);
-        this.player = new Player(this.map.layers, this.greenGroup);
+        this.player = new Player(this.map.layers, this.greenGroup, this.mapItems);
         this.start();
       });
   }
@@ -54,6 +59,8 @@ class Game {
     this.map.layers.forEach((layer) => {
       this.app.stage.addChild(layer);
     });
+    // console.log(this.mapItems)
+    this.app.stage.addChild(this.mapItems);
 
     // this.app.ticker.add(() => {
     //   layer.rotation += 0.01;

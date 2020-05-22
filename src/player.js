@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
-import rectsIntersect from './util';
+import Item from './item';
 
 class Player {
-  constructor(layers, group) {
+  constructor(layers, group, mapItems) {
     this.loader = PIXI.Loader.shared;
     this.playerFrames = [];
     this.actions = {};
@@ -10,15 +10,19 @@ class Player {
     this.layers = layers;
     this.group = group;
     this.boxes = [...layers];
+    this.mapItems = mapItems;
     this.active = null;
 
     this.keys = {};
     this.keysDown = this.keysDown.bind(this);
     this.keysUp = this.keysUp.bind(this);
+    this.mouseDown = this.mouseDown.bind(this);
     this.playerLoop = this.playerLoop.bind(this);
 
     this.vx = 0;
     this.vy = 0;
+
+    this.heldItem = { type: null };
 
     this.createPlayer();
     this.buildActions();
@@ -26,6 +30,7 @@ class Player {
 
     window.addEventListener('keydown', this.keysDown);
     window.addEventListener('keyup', this.keysUp);
+    window.addEventListener('mousedown', this.mouseDown);
   }
 
   createPlayer() {
@@ -81,9 +86,19 @@ class Player {
     this.keys[e.keyCode] = false;
   }
 
+  mouseDown() {
+    if (!this.heldItem.type) {
+      this.heldItem = Item.createItem('lettuce', this.player.x, this.player.y + 10);
+      this.mapItems.addChild(this.heldItem);
+    }
+  }
+
   playerLoop() {
     this.player.y += this.vy;
     this.player.x += this.vx;
+
+    // this.heldItem.x = this.player.x;
+    this.heldItem.y = this.player.y + 7;
     // this.player.zOrder -= 10;
     this.boxes.forEach((box) => {
       if (box.collision(this.player)) {
@@ -108,7 +123,7 @@ class Player {
     }
     // console.log(this.player.y);
 
-
+    const maxSpeed = 6;
     // W
     if (this.keys['87']) {
       if (!this.player.playing) {
@@ -116,7 +131,7 @@ class Player {
         this.facing = 'north';
         this.player.play();
       }
-      this.vy = Math.max(-6, this.vy - 1);
+      this.vy = Math.max(-maxSpeed, this.vy - 1);
     }
 
     // S
@@ -126,7 +141,7 @@ class Player {
         this.facing = 'south';
         this.player.play();
       }
-      this.vy = Math.min(6, this.vy + 1);
+      this.vy = Math.min(maxSpeed, this.vy + 1);
     }
 
     // A
@@ -139,7 +154,8 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.vx = Math.max(-6, this.vx - 1);
+
+      this.vx = Math.max(-maxSpeed, this.vx - 1);
     }
 
     // D
@@ -152,22 +168,30 @@ class Player {
         this.facing = 'side';
         this.player.play();
       }
-      this.vx = Math.min(6, this.vx + 1);
+      this.vx = Math.min(maxSpeed, this.vx + 1);
     }
 
     if (this.vx > 0) {
+      this.heldItem.x = this.player.x + 16;
+      this.heldItem.parent.zIndex = 4;
       this.vx -= 0.5;
     }
 
     if (this.vx < 0) {
+      this.heldItem.x = this.player.x - 16;
+      this.heldItem.parent.zIndex = 4;
       this.vx += 0.5;
     }
 
     if (this.vy > 0) {
+      this.heldItem.x = this.player.x;
+      this.heldItem.parent.zIndex = 4;
       this.vy -= 0.5;
     }
 
     if (this.vy < 0) {
+      this.heldItem.x = this.player.x;
+      this.heldItem.parent.zIndex = 0;
       this.vy += 0.5;
     }
 
