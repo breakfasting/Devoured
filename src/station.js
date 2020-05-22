@@ -8,8 +8,17 @@ class Station extends PIXI.Container {
     this.active = false;
   }
 
-  createItem() {
-    return Item.createItem('lettuce', 100, 100);
+  createItem(x, y, group) {
+    switch (this.name) {
+      case 'appleBox':
+        return Item.createItem('apple', x, y, group);
+      case 'potatoBox':
+        return Item.createItem('potato', x, y, group);
+      case 'cornBox':
+        return Item.createItem('corn', x, y, group);
+      default:
+        return { type: null, parent: {} };
+    }
   }
 
   activate() {

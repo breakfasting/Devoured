@@ -6,14 +6,25 @@ class Item extends PIXI.Sprite {
     this.type = type;
   }
 
-  static createItem(itemName, x, y) {
+  static createItem(itemName, x, y, group) {
     const loader = PIXI.Loader.shared;
     const tileset = loader.resources[itemName].texture;
     const item = new Item(tileset, itemName);
     item.x = x;
     item.y = y;
+    item.parentGroup = group;
     item.anchor.set(0.5);
     return item;
+  }
+
+  activate() {
+    this.tint = 0xFF0000;
+    return this
+  }
+
+  deactivate() {
+    this.tint = 0xFFFFFF;
+    return null;
   }
 
   collision(player) {
@@ -24,12 +35,6 @@ class Item extends PIXI.Sprite {
       && aBox.x < bBox.x + bBox.width
       && aBox.y + aBox.height > bBox.y
       && aBox.y < bBox.y + bBox.height;
-
-    if (collide) {
-      this.tint = 0xFF0000;
-    } else {
-      this.tint = 0xFFFFFF;
-    }
 
     return collide;
   }

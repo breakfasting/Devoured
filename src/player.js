@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js';
-import Item from './item';
 
 class Player {
   constructor(layers, group, mapItems) {
@@ -17,12 +16,14 @@ class Player {
     this.keysDown = this.keysDown.bind(this);
     this.keysUp = this.keysUp.bind(this);
     this.mouseDown = this.mouseDown.bind(this);
+    this.contextMenu = this.contextMenu.bind(this);
     this.playerLoop = this.playerLoop.bind(this);
 
     this.vx = 0;
     this.vy = 0;
 
-    this.heldItem = { type: null };
+    this.heldItem = { type: null, parent: {} };
+    this.hoverItem = null;
 
     this.createPlayer();
     this.buildActions();
@@ -31,6 +32,7 @@ class Player {
     window.addEventListener('keydown', this.keysDown);
     window.addEventListener('keyup', this.keysUp);
     window.addEventListener('mousedown', this.mouseDown);
+    window.addEventListener('contextmenu', this.contextMenu);
   }
 
   createPlayer() {
@@ -86,11 +88,18 @@ class Player {
     this.keys[e.keyCode] = false;
   }
 
-  mouseDown() {
-    if (!this.heldItem.type) {
-      this.heldItem = Item.createItem('lettuce', this.player.x, this.player.y + 10);
-      this.mapItems.addChild(this.heldItem);
+  mouseDown(e) {
+    if (!this.heldItem.type && e.button === 0) {
+      if (this.active) {
+        this.heldItem = this.active.createItem(this.player.x, this.player.y + 10, this.group);
+        this.mapItems.addChild(this.heldItem);
+      }
     }
+  }
+
+  contextMenu(e) {
+    e.preventDefault();
+    this.heldItem = { type: null, parent: {} };
   }
 
   playerLoop() {
@@ -110,17 +119,22 @@ class Player {
         this.active = this.active ? this.active : box.activate();
       }
     });
-    // console.log(this.active)
-    // if (this.boxes.some((box) => box.collision(this.player))) {
-    //   this.player.y -= this.vy;
-    //   this.player.x -= this.vx;
-    //   this.vy = 0;
-    //   this.vx = 0;
-    // }
+
+    this.mapItems.children.forEach((item) => {
+      if (item.collision(this.player)) {
+        this.hoverItem = this.hoverItem ? this.hoverItem : item.activate();
+      }
+    });
 
     if (this.active && !this.active.inRange(this.player)) {
       this.active = this.active.deactivate();
     }
+
+    // console.log(this.hoverItem);
+    if (this.hoverItem && !this.hoverItem.collision(this.player)) {
+      this.hoverItem = this.hoverItem.deactivate();
+    }
+
     // console.log(this.player.y);
 
     const maxSpeed = 6;
@@ -173,25 +187,25 @@ class Player {
 
     if (this.vx > 0) {
       this.heldItem.x = this.player.x + 16;
-      this.heldItem.parent.zIndex = 4;
+      // this.heldItem.parent.zIndex = 4;
       this.vx -= 0.5;
     }
 
     if (this.vx < 0) {
       this.heldItem.x = this.player.x - 16;
-      this.heldItem.parent.zIndex = 4;
+      // this.heldItem.parent.zIndex = 4;
       this.vx += 0.5;
     }
 
     if (this.vy > 0) {
       this.heldItem.x = this.player.x;
-      this.heldItem.parent.zIndex = 4;
+      // this.heldItem.parent.zIndex = 4;
       this.vy -= 0.5;
     }
 
     if (this.vy < 0) {
       this.heldItem.x = this.player.x;
-      this.heldItem.parent.zIndex = 0;
+      // this.heldItem.parent.zIndex = 1;
       this.vy += 0.5;
     }
 
