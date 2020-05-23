@@ -26,11 +26,11 @@ class Game {
   }
 
   load() {
-    this.loader.add('player', 'assets/player.png');
-    this.loader.add('corn', 'assets/food/Corn.png');
-    this.loader.add('apple', 'assets/food/AppleRed.png');
-    this.loader.add('potato', 'assets/food/Potato.png');
-    this.loader.add('tileset', 'assets/tiles.png')
+    this.loader.add('player', 'dist/assets/player.png');
+    this.loader.add('corn', 'dist/assets/food/Corn.png');
+    this.loader.add('apple', 'dist/assets/food/AppleRed.png');
+    this.loader.add('potato', 'dist/assets/food/Potato.png');
+    this.loader.add('tileset', 'dist/assets/tiles.png')
       .on('progress', (loader) => {
         console.log(`${loader.progress}% loaded`);
       })
