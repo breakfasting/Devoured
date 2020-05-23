@@ -65,7 +65,7 @@ class Game {
     this.app.stage.addChild(this.mapItems);
 
     this.app.ticker.add(() => {
-      this.mapItems.children.forEach(item => item.fly());
+      this.mapItems.children.forEach((item) => item.fly(this.map.layers));
     });
     this.app.ticker.add(this.gameLoop);
     this.app.ticker.add(this.player.playerLoop);

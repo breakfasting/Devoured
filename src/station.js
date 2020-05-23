@@ -6,6 +6,7 @@ class Station extends PIXI.Container {
     super();
     this.name = name;
     this.active = false;
+    this.heldItem = { type: null, parent: {} };
   }
 
   createItem(x, y, group) {

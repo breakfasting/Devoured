@@ -14,7 +14,12 @@ class Item extends PIXI.Sprite {
   static createItem(itemName, x, y, group) {
     const loader = PIXI.Loader.shared;
     const tileset = loader.resources[itemName].texture;
-    const item = new Item(tileset, itemName);
+    const texture = new PIXI.Texture(
+      tileset,
+      new PIXI.Rectangle(4, 4, 24, 24),
+    );
+    const item = new Item(texture, itemName);
+    // item.hitArea = new PIXI.Rectangle(4, 4, 24, 24)
     item.x = x;
     item.y = y;
     item.parentGroup = group;
@@ -22,10 +27,25 @@ class Item extends PIXI.Sprite {
     return item;
   }
 
-  fly() {
+  fly(stations) {
     if (this.flying) {
       this.x += this.vx;
       this.y += this.vy;
+
+      if (Math.abs(this.vx) < 8 && Math.abs(this.vy) < 8) {
+        stations.forEach((station) => {
+          if (this.collision(station)) {
+            console.log(station)
+            console.log(this)
+            this.y -= this.vy;
+            this.x -= this.vx;
+            this.vy = -this.vy / 2;
+            this.vx = -this.vx / 2;
+          }
+        })
+
+      }
+
       if (this.vx > 0) {
         this.vx = this.vx - 0.2 < 0 ? 0 : this.vx - 0.2;
       }
@@ -63,8 +83,8 @@ class Item extends PIXI.Sprite {
     return null;
   }
 
-  collision(player) {
-    const aBox = player.getBounds();
+  collision(stuff) {
+    const aBox = stuff.getBounds();
     const bBox = this.getBounds();
 
     const collide = aBox.x + aBox.width > bBox.x

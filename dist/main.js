@@ -48005,7 +48005,7 @@ var Game = /*#__PURE__*/function () {
       this.app.stage.addChild(this.mapItems);
       this.app.ticker.add(function () {
         _this2.mapItems.children.forEach(function (item) {
-          return item.fly();
+          return item.fly(_this2.map.layers);
         });
       });
       this.app.ticker.add(this.gameLoop);
@@ -48096,10 +48096,25 @@ var Item = /*#__PURE__*/function (_PIXI$Sprite) {
 
   _createClass(Item, [{
     key: "fly",
-    value: function fly() {
+    value: function fly(stations) {
+      var _this2 = this;
+
       if (this.flying) {
         this.x += this.vx;
         this.y += this.vy;
+
+        if (Math.abs(this.vx) < 8 && Math.abs(this.vy) < 8) {
+          stations.forEach(function (station) {
+            if (_this2.collision(station)) {
+              console.log(station);
+              console.log(_this2);
+              _this2.y -= _this2.vy;
+              _this2.x -= _this2.vx;
+              _this2.vy = -_this2.vy / 2;
+              _this2.vx = -_this2.vx / 2;
+            }
+          });
+        }
 
         if (this.vx > 0) {
           this.vx = this.vx - 0.2 < 0 ? 0 : this.vx - 0.2;
@@ -48142,8 +48157,8 @@ var Item = /*#__PURE__*/function (_PIXI$Sprite) {
     }
   }, {
     key: "collision",
-    value: function collision(player) {
-      var aBox = player.getBounds();
+    value: function collision(stuff) {
+      var aBox = stuff.getBounds();
       var bBox = this.getBounds();
       var collide = aBox.x + aBox.width > bBox.x && aBox.x < bBox.x + bBox.width && aBox.y + aBox.height > bBox.y && aBox.y < bBox.y + bBox.height;
       return collide;
@@ -48153,7 +48168,9 @@ var Item = /*#__PURE__*/function (_PIXI$Sprite) {
     value: function createItem(itemName, x, y, group) {
       var loader = pixi_js__WEBPACK_IMPORTED_MODULE_0__["Loader"].shared;
       var tileset = loader.resources[itemName].texture;
-      var item = new Item(tileset, itemName);
+      var texture = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Texture"](tileset, new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Rectangle"](4, 4, 24, 24));
+      var item = new Item(texture, itemName); // item.hitArea = new PIXI.Rectangle(4, 4, 24, 24)
+
       item.x = x;
       item.y = y;
       item.parentGroup = group;
@@ -48599,6 +48616,10 @@ var Station = /*#__PURE__*/function (_PIXI$Container) {
     _this = _super.call(this);
     _this.name = name;
     _this.active = false;
+    _this.heldItem = {
+      type: null,
+      parent: {}
+    };
     return _this;
   }
 
