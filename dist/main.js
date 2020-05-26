@@ -48106,8 +48106,8 @@ var Item = /*#__PURE__*/function (_PIXI$Sprite) {
         if (Math.abs(this.vx) < 8 && Math.abs(this.vy) < 8) {
           stations.forEach(function (station) {
             if (_this2.collision(station)) {
-              console.log(station);
-              console.log(_this2);
+              // console.log(station);
+              // console.log(this);
               _this2.y -= _this2.vy;
               _this2.x -= _this2.vx;
               _this2.vy = -_this2.vy / 2;

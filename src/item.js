@@ -35,15 +35,14 @@ class Item extends PIXI.Sprite {
       if (Math.abs(this.vx) < 8 && Math.abs(this.vy) < 8) {
         stations.forEach((station) => {
           if (this.collision(station)) {
-            console.log(station)
-            console.log(this)
+            // console.log(station);
+            // console.log(this);
             this.y -= this.vy;
             this.x -= this.vx;
             this.vy = -this.vy / 2;
             this.vx = -this.vx / 2;
           }
-        })
-
+        });
       }
 
       if (this.vx > 0) {
